@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex - Sistema de Batalla</title>
+    <meta name="description" content="Una Pokédex interactiva con sistema de batalla estilo clásico de Pokémon">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="container">
+        <!------ LEFT SIDE ------>
+        <div id="left-side">
+            <!-- Rounded bordure left -->
+            <div id="round-bordure-left-side"></div>
+            <div id="round-bordure-left-side2"></div>
+            <!-- Top left lights -->
+            <div id="big-blue-light-background" class="light">
+                <div id="big-blue-light" class="light"></div>
+                <div id="big-blue-light-glint" class="light"></div>
+            </div>
+            <div id="little-lights">
+                <div class="light little-light red-light"></div>
+                <div class="light little-light yellow-light"></div>
+                <div class="light little-light green-light"></div>
+            </div>
+            <!-- Left side big screen with red lights -->
+            <div id="screen-left-background">
+                <div id="screen-left-little-lights">
+                    <div class="screen-left-little-red-light light"></div>
+                    <div class="screen-left-little-red-light light"></div>
+                </div>
+                <!-- Screen for the Pokemon images -->
+                <div id="screen-left">
+                    <img id="screen-left-image" src="profesor.svg" alt="">
+                </div>
+                <div id="screen-left-big-red-light" class="light"></div>
+                <div id="screen-left-burger">
+                    <div id="screen-left-burger-inside"></div>
+                </div>
+            </div>
+            <!-- Console -->
+            <div id="elongated-buttons">
+                <div class="elongated-button elongated-button1 clickable"></div>
+                <div class="elongated-button elongated-button2 clickable"></div>
+            </div>
+            <div id="rounded-button" class="clickable"></div>
+            <div id="screen-left-little">
+                <p>Altura: <span id="pokemon-height"></span></p>
+                <p>Peso: <span id="pokemon-weight"></span></p>
+            </div>
+            <!-- Cross used to choose the Pokemon -->
+            <div id="cross">
+                <div class="cross cross-top clickable" onclick="navegarPokemon('anterior')">
+                    <div class="arrow arrow-top"></div>
+                </div>
+                <div class="cross cross-mid"></div>
+                <div class="cross cross-bottom clickable" onclick="navegarPokemon('siguiente')">
+                    <div class="arrow arrow-bottom"></div>
+                </div>
+                <div class="cross cross-left clickable" onclick="cambiarVistaPokemon('izquierda')">
+                    <div class="arrow arrow-left"></div>
+                </div>
+                <div class="cross cross-right clickable" onclick="cambiarVistaPokemon('derecha')">
+                    <div class="arrow arrow-right"></div>
+                </div>
+            </div>
+        </div>
+
+        <!------ MIDDLE ------>
+        <!-- Bindings -->
+        <div class="binding">
+            <div class="hinge hinge1"></div>
+            <div class="hinge hinge2"></div>
+            <div class="hinge hinge3"></div>
+        </div>
+
+        <!------ RIGHT SIDES ------>
+        <div id="right-side">
+            <!-- Rounded bordure right -->
+            <div id="round-bordure-right-side"></div>
+            <!-- Right side screen -->
+            <div id="screen-right">
+                <p id="pokemon-numero-p">Número: <span id="pokemon-numero"></span></p>
+                <p id="pokemon-title-p">Nombre: <span id="pokemon-title"></span></p>
+                <p id="pokemon-genero-p" style="text-align: center; width: 100%; padding-bottom: 8px; font-size: 12px;">
+                    Genero: <span id="pokemon-genero">-</span>
+                </p>
+                <p id="pokemon-hp-p" class="pokemon-stats-left">HP: <span id="pokemon-hp"></span></p>
+                <p id="pokemon-attack-p" class="pokemon-stats-right">Atk: <span id="pokemon-attack"></span></p>
+                <p id="pokemon-defense-p" class="pokemon-stats-left">Def: <span id="pokemon-defense"></span></p>
+                <p id="pokemon-sp-attack-p" class="pokemon-stats-right">Sp.Atk: <span id="pokemon-sp-attack"></span></p>
+                <p id="pokemon-sp-defense-p" class="pokemon-stats-left">Sp.Def: <span id="pokemon-sp-defense"></span>
+                </p>
+                <p id="pokemon-speed-p" class="pokemon-stats-right">Vel: <span id="pokemon-speed"></span></p>
+            </div>
+            <!-- Right side keyboard -->
+            <div id="keyboard">
+                <button class="key clickable" onclick="asignarNumero(this)">1</button>
+                <button class="key clickable" onclick="asignarNumero(this)">2</button>
+                <button class="key clickable" onclick="asignarNumero(this)">3</button>
+                <button class="key clickable" onclick="asignarNumero(this)">4</button>
+                <button class="key clickable" onclick="asignarNumero(this)">5</button>
+                <button class="key clickable" onclick="asignarNumero(this)">6</button>
+                <button class="key clickable" onclick="asignarNumero(this)">7</button>
+                <button class="key clickable" onclick="asignarNumero(this)">8</button>
+                <button class="key clickable" onclick="asignarNumero(this)">9</button>
+                <button class="key clickable" onclick="asignarNumero(this)">0</button>
+            </div>
+            <!-- Right elongated lights -->
+            <div id="elongated-lights">
+                <div class="key light"></div>
+                <div class="key light"></div>
+            </div>
+            <!-- Right side yellow light -->
+            <button id="right-side-yellow-light" class="key light"></button>
+            <!-- Right side white buttons -->
+            <div id="white-buttons">
+                <button class="key clickable" onclick="buscarPokemon()">Buscar</button>
+                <button class="key clickable" onclick="agregarPokemon()">Agregar</button>
+                <button class="key clickable" onclick="buscarPokemonRandom()">Random</button>
+            </div>
+            <!-- Right side grey buttons -->
+            <div id="grey-buttons">
+                <div class="key" id="tipo-container-1">
+                    <p id="pokemon-type-1"></p>
+                </div>
+                <div class="key" id="tipo-container-2">
+                    <p id="pokemon-type-2"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <table border="1">
+        <thead>
+            <tr>
+                <td>No</td>
+                <td>Nombre</td>
+                <td>Genero</td>
+                <td>HP</td>
+                <td>Atk</td>
+                <td>Def</td>
+                <td>Sp.Atk</td>
+                <td>Sp.Def</td>
+                <td>Vel</td>
+                <td>Shiny</td>
+                <td>Acciones</td>
+            </tr>
+        </thead>
+        <tbody id="contenido-tabla">
+        </tbody>
+    </table>
+    <br>
+    <div style="text-align: center; margin: 40px 0;">
+        <button id="battle-start-btn" class="battle-start-button" onclick="iniciarBatalla()">
+            ⚔️ INICIAR BATALLA ⚔️
+        </button>
+    </div>
+    <br>
+
+    <!-- ==================== MODAL DE BATALLA ==================== -->
+    <div id="battle-modal" class="battle-modal">
+
+        <!-- Transición de Pokébolas -->
+        <div id="pokeball-transition" class="pokeball-transition">
+            <div class="pokeball-left">
+                <img src="pokeball.png" alt="Pokéball">
+            </div>
+            <div class="pokeball-right">
+                <img src="pokeball.png" alt="Pokéball">
+            </div>
+        </div>
+
+        <!-- Intro de Batalla -->
+        <div id="battle-intro" class="battle-intro">
+            <div class="intro-bg"></div>
+            <div class="intro-content">
+                <div class="intro-pokemon-container">
+                    <img id="intro-pokemon-sprite" class="intro-pokemon-sprite" src="" alt="Wild Pokemon">
+                </div>
+                <div class="battle-intro-text">
+                    <h1 id="intro-title">¡Un Pokémon salvaje apareció!</h1>
+                    <h2 id="intro-pokemon-name"></h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Arena de Batalla -->
+        <div id="battle-arena" class="battle-arena">
+            <button class="battle-close-btn" onclick="cerrarBatalla()">✕</button>
+
+            <!-- Campo de batalla con fondo -->
+            <div class="battle-field">
+                <!-- Fondo de batalla -->
+                <div class="battle-background"></div>
+
+                <!-- Lado del Oponente -->
+                <div class="opponent-side">
+                    <div class="pokemon-info-box opponent-info">
+                        <div class="info-header">
+                            <span id="opponent-pokemon-name" class="pokemon-name">-</span>
+                            <span id="opponent-pokemon-gender" class="pokemon-gender"></span>
+                            <span class="pokemon-level">Nv.50</span>
+                        </div>
+                        <div class="hp-section">
+                            <span class="hp-label">PS</span>
+                            <div class="hp-bar-container">
+                                <div id="opponent-hp-bar" class="hp-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sprite-platform opponent-platform">
+                        <div class="grass-patch"></div>
+                    </div>
+                    <div class="pokemon-sprite-container opponent-sprite-container">
+                        <img id="opponent-pokemon-sprite" class="battle-pokemon-sprite" src="" alt="Opponent Pokemon">
+                    </div>
+                </div>
+
+                <!-- Lado del Jugador -->
+                <div class="player-side">
+                    <div class="pokemon-sprite-container player-sprite-container">
+                        <img id="player-pokemon-sprite" class="battle-pokemon-sprite player-sprite" src=""
+                            alt="Player Pokemon">
+                    </div>
+                    <div class="sprite-platform player-platform">
+                        <div class="grass-patch"></div>
+                    </div>
+                    <div class="pokemon-info-box player-info">
+                        <div class="info-header">
+                            <span id="player-pokemon-name" class="pokemon-name">-</span>
+                            <span id="player-pokemon-gender" class="pokemon-gender"></span>
+                            <span class="pokemon-level">Nv.50</span>
+                        </div>
+                        <div class="hp-section">
+                            <span class="hp-label">PS</span>
+                            <div class="hp-bar-container">
+                                <div id="player-hp-bar" class="hp-bar"></div>
+                            </div>
+                        </div>
+                        <div class="hp-text">
+                            <span id="player-hp-current">0</span>
+                            <span>/</span>
+                            <span id="player-hp-max">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UI de Batalla -->
+            <div class="battle-ui">
+                <!-- Caja de Mensaje -->
+                <div class="battle-message-box">
+                    <p id="battle-message">¿Qué hará tu Pokémon?</p>
+                </div>
+
+                <!-- Contenedor de Menús -->
+                <div class="battle-menu-container">
+                    <!-- MENÚ PRINCIPAL -->
+                    <div id="battle-main-menu" class="battle-main-menu">
+                        <button class="menu-btn fight-btn" onclick="mostrarSubMenu('atacar')">LUCHAR</button>
+                        <button class="menu-btn bag-btn" onclick="mostrarSubMenu('mochila')">MOCHILA</button>
+                        <button class="menu-btn pokemon-btn" onclick="mostrarSubMenu('pokemon')">POKÉMON</button>
+                        <button class="menu-btn run-btn" onclick="intentarHuir()">HUIR</button>
+                    </div>
+
+                    <!-- SUBMENÚ ATACAR (LUCHAR) -->
+                    <div id="battle-attack-menu" class="battle-submenu" style="display: none;">
+                        <div id="battle-moves" class="moves-container">
+                            <!-- Movimientos se cargan dinámicamente -->
+                        </div>
+                        <button class="back-btn" onclick="volveralMenuPrincipal()">← VOLVER</button>
+                    </div>
+
+                    <!-- SUBMENÚ MOCHILA -->
+                    <div id="battle-bag-menu" class="battle-submenu" style="display: none;">
+                        <div id="bag-items" class="bag-container">
+                            <!-- Items se cargan dinámicamente -->
+                        </div>
+                        <button class="back-btn" onclick="volveralMenuPrincipal()">← VOLVER</button>
+                    </div>
+
+                    <!-- SUBMENÚ POKÉMON -->
+                    <div id="battle-pokemon-menu" class="battle-submenu" style="display: none;">
+                        <div id="pokemon-selection-list" class="pokemon-list-container">
+                            <!-- Lista de Pokémon se carga dinámicamente -->
+                        </div>
+                        <button class="back-btn" onclick="volveralMenuPrincipal()">← VOLVER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar Pokémon -->
+    <div id="modal-agregar" class="modal">
+        <div class="modal-content">
+            <h2>¿Agregar a tu equipo?</h2>
+            <label>Nombre del Pokémon</label>
+            <input id="nombre_agregar" type="text">
+
+            <label>Genero</label>
+            <div id="genero-options" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button type="button" onclick="seleccionarGenero('Macho')" class="genero-btn">Macho</button>
+                <button type="button" onclick="seleccionarGenero('Hembra')" class="genero-btn">Hembra</button>
+                <button type="button" onclick="seleccionarGenero('Sin Genero')" class="genero-btn">Sin Genero</button>
+            </div>
+            <p id="genero-seleccionado" style="text-align: center; font-weight: bold; margin: 10px 0;">
+                Genero seleccionado: <span id="genero-display">-</span>
+            </p>
+
+            <div id="ivs-display" style="background: #f0f0f0; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                <h3 style="margin: 0 0 10px 0; text-align: center;">IVs Generados</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 12px;">
+                    <p style="margin: 3px 0;">HP: <span id="iv-hp-display"></span></p>
+                    <p style="margin: 3px 0;">Ataque: <span id="iv-attack-display"></span></p>
+                    <p style="margin: 3px 0;">Defensa: <span id="iv-defense-display"></span></p>
+                    <p style="margin: 3px 0;">Sp.Atk: <span id="iv-sp-attack-display"></span></p>
+                    <p style="margin: 3px 0;">Sp.Def: <span id="iv-sp-defense-display"></span></p>
+                    <p style="margin: 3px 0;">Velocidad: <span id="iv-speed-display"></span></p>
+                </div>
+                <p id="shiny-bonus-msg"
+                    style="text-align: center; color: #ffcb05; font-weight: bold; margin-top: 10px; display: none;">
+                    ¡+10 IVs por ser SHINY!
+                </p>
+            </div>
+
+            <div class="modal-buttons">
+                <button onclick="cerrarModalAgregar()">Cancelar</button>
+                <button onclick="confirmarAgregarPokemon()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar Pokémon -->
+    <div id="modal-editar" class="modal">
+        <div class="modal-content">
+            <h2>Editar Pokémon</h2>
+            <input id="index" type="hidden">
+            <label>Nombre</label>
+            <input id="nombre_editar" type="text">
+            <div class="modal-buttons">
+                <button onclick="cerrarModalEditar()">Cancelar</button>
+                <button onclick="editarPokemon()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/general.js"></script>
+    <script src="./js/battle.js"></script>
+</body>
+
+</html>
