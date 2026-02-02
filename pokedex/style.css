@@ -946,60 +946,73 @@ table tbody tr td button:last-child:hover {
   width: 100%;
   height: 100%;
   z-index: 3000;
-  background: transparent;
+  background: #000;
   overflow: hidden;
 }
 
-.pokeball-left,
-.pokeball-right {
+.pokeball-container {
   position: absolute;
-  top: 0;
-  width: 55%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+}
+
+.pokeball-top-half,
+.pokeball-bottom-half {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
   transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-.pokeball-left {
+.pokeball-top-half {
+  top: 0;
+}
+
+.pokeball-bottom-half {
+  bottom: 0;
+}
+
+.pokeball-top-half img {
+  position: absolute;
+  top: 0;
   left: 0;
-  background: #000;
-  transform: translateX(-100%);
-  justify-content: flex-end;
-  padding-right: 0;
-}
-
-.pokeball-right {
-  right: 0;
-  background: #000;
-  transform: translateX(100%);
-  justify-content: flex-start;
-  padding-left: 0;
-}
-
-.pokeball-left img,
-.pokeball-right img {
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 200%;
   object-fit: contain;
   image-rendering: pixelated;
 }
 
-.pokeball-transition.active .pokeball-left {
-  transform: translateX(0);
+.pokeball-bottom-half img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
-.pokeball-transition.active .pokeball-right {
-  transform: translateX(0);
+/* Estado inicial: pokébola cerrada */
+.pokeball-transition.active .pokeball-top-half {
+  transform: translateY(0);
 }
 
-.pokeball-transition.opening .pokeball-left {
-  transform: translateX(-100%);
+.pokeball-transition.active .pokeball-bottom-half {
+  transform: translateY(0);
 }
 
-.pokeball-transition.opening .pokeball-right {
-  transform: translateX(100%);
+/* Estado abierto: las mitades se separan */
+.pokeball-transition.opening .pokeball-top-half {
+  transform: translateY(-150%);
+}
+
+.pokeball-transition.opening .pokeball-bottom-half {
+  transform: translateY(150%);
 }
 
 /* ==================== INTRO DE BATALLA ==================== */
@@ -1053,6 +1066,33 @@ table tbody tr td button:last-child:hover {
   object-fit: contain;
   image-rendering: pixelated;
   filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+}
+
+.intro-trainer-container {
+  animation: introTrainerSlide 1s ease-out;
+}
+
+.intro-trainer-sprite {
+  width: 250px;
+  height: 250px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes introTrainerSlide {
+  0% {
+    transform: translateX(100px) scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(-10px) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes introFloatIn {
@@ -1172,28 +1212,77 @@ table tbody tr td button:last-child:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url("battle-bg.png");
+  /* Gradiente de fallback */
+  background-color: #78c850;
+  /* Imagen de fondo */
+  background-image: url(battle-bg.png);
+  background-repeat: no-repeat;
+  background-position: center center;
   background-size: cover;
-  background-position: center;
   z-index: 0;
+  image-rendering: pixelated;
+  image-rendering: -webkit-optimize-contrast;
 }
 
-/* Fallback si no hay imagen */
-.battle-background::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+/* ==================== INDICADORES DE POKÉBOLAS ==================== */
+
+.pokeball-indicators {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.pokeball-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
   background: linear-gradient(
     180deg,
-    #87ceeb 0%,
-    #87ceeb 40%,
-    #78c850 40%,
-    #5a9a38 100%
+    #ff4444 0%,
+    #ff4444 45%,
+    #333 45%,
+    #333 55%,
+    #fff 55%,
+    #fff 100%
   );
-  z-index: -1;
+  border: 1px solid #333;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.pokeball-indicator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  background: #fff;
+  border: 1px solid #333;
+  border-radius: 50%;
+}
+
+.pokeball-indicator.fainted {
+  background: linear-gradient(
+    180deg,
+    #666 0%,
+    #666 45%,
+    #333 45%,
+    #333 55%,
+    #888 55%,
+    #888 100%
+  );
+  opacity: 0.5;
+}
+
+.pokeball-indicator.empty {
+  background: transparent;
+  border: 1px dashed #666;
+}
+
+.pokeball-indicator.empty::after {
+  display: none;
 }
 
 /* ==================== LADOS DE BATALLA ==================== */
@@ -1284,6 +1373,8 @@ table tbody tr td button:last-child:hover {
   width: 250px;
   height: 250px;
 }
+
+/* Los sprites de entrenadores solo se usan en la intro */
 
 @keyframes opponentSlideIn {
   from {

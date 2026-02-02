@@ -1,7 +1,3 @@
-// ==========================================
-// SISTEMA DE BATALLA POKÉMON COMPLETO
-// ==========================================
-
 let batallaActiva = false;
 let jugadorPokemon = [];
 let oponentePokemon = [];
@@ -174,9 +170,6 @@ const tiposEspanol = {
   fairy: "hada",
 };
 
-// ==========================================
-// FUNCIÓN PRINCIPAL PARA INICIAR BATALLA
-// ==========================================
 async function iniciarBatalla() {
   if (!pokemonGuardados || pokemonGuardados.length === 0) {
     alert("Necesitas al menos 1 Pokémon en tu equipo para iniciar una batalla");
@@ -185,41 +178,30 @@ async function iniciarBatalla() {
 
   batallaActiva = true;
 
-  // Mostrar el modal y activar la animación de transición con pokébolas
   const modal = document.getElementById("battle-modal");
   modal.style.display = "block";
 
-  // Mostrar animación de pokébolas
   await mostrarTransicionPokebolas();
 
-  // Preparar la batalla
   await prepararBatalla();
 
-  // Mostrar intro
   await mostrarAnimacionIntro();
 }
 
-// ==========================================
-// ANIMACIÓN DE TRANSICIÓN CON POKÉBOLAS
-// ==========================================
 async function mostrarTransicionPokebolas() {
   const transitionContainer = document.getElementById("pokeball-transition");
   transitionContainer.style.display = "flex";
 
-  // Activar animación de pokébolas cerrándose
   transitionContainer.classList.add("active");
 
-  // Esperar a que las pokébolas cierren la pantalla
   await esperarSegundos(0.8);
 
-  // Mantener cerrado un momento
   await esperarSegundos(0.3);
 }
 
 async function ocultarTransicionPokebolas() {
   const transitionContainer = document.getElementById("pokeball-transition");
 
-  // Abrir las pokébolas
   transitionContainer.classList.remove("active");
   transitionContainer.classList.add("opening");
 
@@ -229,9 +211,6 @@ async function ocultarTransicionPokebolas() {
   transitionContainer.classList.remove("opening");
 }
 
-// ==========================================
-// ANIMACIÓN DE INTRO
-// ==========================================
 async function mostrarAnimacionIntro() {
   const introDiv = document.getElementById("battle-intro");
   const arenaDiv = document.getElementById("battle-arena");
@@ -240,34 +219,23 @@ async function mostrarAnimacionIntro() {
   arenaDiv.style.display = "none";
 
   document.getElementById("intro-title").textContent =
-    "¡Un Pokémon salvaje apareció!";
-  document.getElementById("intro-pokemon-name").textContent =
-    pokemonOponenteActivo.nombre.toUpperCase();
-
-  // Mostrar sprite del oponente en la intro
-  const introSprite = document.getElementById("intro-pokemon-sprite");
-  introSprite.src = pokemonOponenteActivo.esShiny
-    ? pokemonOponenteActivo.sprites.front_shiny
-    : pokemonOponenteActivo.sprites.front_default;
+    "Un entrenador te ha desafiado!";
+  document.getElementById("intro-trainer-name").textContent =
+    "Entrenador Rocket";
 
   await esperarSegundos(0.5);
   await ocultarTransicionPokebolas();
 
-  await esperarSegundos(2);
+  await esperarSegundos(2.5);
 
   introDiv.style.display = "none";
   mostrarBatallaArena();
 }
 
-// ==========================================
-// PREPARAR BATALLA
-// ==========================================
 async function prepararBatalla() {
-  // Clonar equipo del jugador
   jugadorPokemon = JSON.parse(JSON.stringify(pokemonGuardados));
 
-  // Generar oponente aleatorio (1-3 pokémon)
-  const cantidadOponente = Math.floor(Math.random() * 3) + 1;
+  const cantidadOponente = Math.floor(Math.random() * 6) + 1;
   oponentePokemon = [];
 
   for (let i = 0; i < cantidadOponente; i++) {
@@ -281,7 +249,6 @@ async function prepararBatalla() {
   await cargarMovimientos(pokemonJugadorActivo);
   await cargarMovimientos(pokemonOponenteActivo);
 
-  // Inicializar HP
   jugadorPokemon.forEach((p) => {
     p.hpMax = calcularHPTotal(p);
     if (p.hpActual === undefined) p.hpActual = p.hpMax;
@@ -293,9 +260,6 @@ async function prepararBatalla() {
   });
 }
 
-// ==========================================
-// OBTENER POKÉMON ALEATORIO
-// ==========================================
 async function obtenerPokemonAleatorio() {
   const idAleatorio = Math.floor(Math.random() * 898) + 1;
 
@@ -334,7 +298,6 @@ async function obtenerPokemonAleatorio() {
     return pokemon;
   } catch (error) {
     console.error("Error al obtener Pokémon aleatorio:", error);
-    // Fallback a Pikachu si hay error
     const res = await fetch("https://pokeapi.co/api/v2/pokemon/25");
     const data = await res.json();
 
@@ -364,16 +327,12 @@ async function obtenerPokemonAleatorio() {
   }
 }
 
-// ==========================================
-// CARGAR MOVIMIENTOS DE UN POKÉMON
-// ==========================================
 async function cargarMovimientos(pokemon) {
   if (movimientosPokemon[pokemon.nombre]) return;
 
   const movimientos = [];
   const movesDisponibles = pokemon.moves || [];
 
-  // Seleccionar hasta 4 movimientos aleatorios que tengan poder
   const movimientosConPoder = [];
 
   for (let i = 0; i < Math.min(movesDisponibles.length, 20); i++) {
@@ -401,7 +360,6 @@ async function cargarMovimientos(pokemon) {
     }
   }
 
-  // Si no hay movimientos con poder, agregar Placaje por defecto
   if (movimientosConPoder.length === 0) {
     movimientosConPoder.push({
       nombre: "tackle",
@@ -416,9 +374,6 @@ async function cargarMovimientos(pokemon) {
   movimientosPokemon[pokemon.nombre] = movimientosConPoder;
 }
 
-// ==========================================
-// TRADUCIR MOVIMIENTOS
-// ==========================================
 function traducirMovimiento(nombre) {
   const traducciones = {
     tackle: "Placaje",
@@ -532,18 +487,12 @@ function traducirMovimiento(nombre) {
   return traducciones[nombre] || nombre.toUpperCase().replace(/-/g, " ");
 }
 
-// ==========================================
-// CALCULAR HP TOTAL
-// ==========================================
 function calcularHPTotal(pokemon) {
   const baseHP = parseInt(pokemon.hp) || 50;
   const iv = pokemon.ivs?.hp || 15;
   return Math.floor(((2 * baseHP + iv) * 50) / 100) + 60;
 }
 
-// ==========================================
-// MOSTRAR ARENA DE BATALLA
-// ==========================================
 function mostrarBatallaArena() {
   const arenaDiv = document.getElementById("battle-arena");
   arenaDiv.style.display = "flex";
@@ -554,11 +503,7 @@ function mostrarBatallaArena() {
   actualizarInterfazBatalla();
 }
 
-// ==========================================
-// ACTUALIZAR INTERFAZ DE BATALLA
-// ==========================================
 function actualizarInterfazBatalla() {
-  // Información del jugador
   document.getElementById("player-pokemon-name").textContent =
     pokemonJugadorActivo.nombre;
   document.getElementById("player-pokemon-gender").textContent =
@@ -583,7 +528,6 @@ function actualizarInterfazBatalla() {
   playerHpBar.style.width = Math.max(0, playerHpPercent) + "%";
   actualizarColorBarra(playerHpBar, playerHpPercent);
 
-  // Información del oponente
   document.getElementById("opponent-pokemon-name").textContent =
     pokemonOponenteActivo.nombre;
   document.getElementById("opponent-pokemon-gender").textContent =
@@ -602,7 +546,6 @@ function actualizarInterfazBatalla() {
   opponentHpBar.style.width = Math.max(0, opponentHpPercent) + "%";
   actualizarColorBarra(opponentHpBar, opponentHpPercent);
 
-  // Sprites
   const playerSprite =
     pokemonJugadorActivo.sprites.back_default ||
     pokemonJugadorActivo.sprites.front_default;
@@ -613,8 +556,51 @@ function actualizarInterfazBatalla() {
   document.getElementById("player-pokemon-sprite").src = playerSprite;
   document.getElementById("opponent-pokemon-sprite").src = opponentSprite;
 
-  // Mensaje por defecto
+  actualizarIndicadoresPokebolas();
+
   mostrarMensajeBatalla(`¿Qué hará ${pokemonJugadorActivo.nombre}?`);
+}
+
+function actualizarIndicadoresPokebolas() {
+  const playerIndicators = document.getElementById(
+    "player-pokeball-indicators",
+  );
+  playerIndicators.innerHTML = "";
+
+  for (let i = 0; i < 6; i++) {
+    const indicator = document.createElement("div");
+    indicator.className = "pokeball-indicator";
+
+    if (i < jugadorPokemon.length) {
+      if (jugadorPokemon[i].hpActual <= 0) {
+        indicator.classList.add("fainted");
+      }
+    } else {
+      indicator.classList.add("empty");
+    }
+
+    playerIndicators.appendChild(indicator);
+  }
+
+  const opponentIndicators = document.getElementById(
+    "opponent-pokeball-indicators",
+  );
+  opponentIndicators.innerHTML = "";
+
+  for (let i = 0; i < 6; i++) {
+    const indicator = document.createElement("div");
+    indicator.className = "pokeball-indicator";
+
+    if (i < oponentePokemon.length) {
+      if (oponentePokemon[i].hpActual <= 0) {
+        indicator.classList.add("fainted");
+      }
+    } else {
+      indicator.classList.add("empty");
+    }
+
+    opponentIndicators.appendChild(indicator);
+  }
 }
 
 function actualizarColorBarra(barra, porcentaje) {
@@ -627,9 +613,6 @@ function actualizarColorBarra(barra, porcentaje) {
   }
 }
 
-// ==========================================
-// SISTEMA DE MENÚS
-// ==========================================
 function mostrarSubMenu(menu) {
   if (!turnoJugador) return;
 
@@ -661,9 +644,6 @@ function volveralMenuPrincipal() {
   }
 }
 
-// ==========================================
-// MENÚ DE MOVIMIENTOS (LUCHAR)
-// ==========================================
 function mostrarMovimientosMenu() {
   const movesContainer = document.getElementById("battle-moves");
   movesContainer.innerHTML = "";
@@ -690,9 +670,6 @@ function mostrarMovimientosMenu() {
   }
 }
 
-// ==========================================
-// MENÚ DE MOCHILA
-// ==========================================
 function mostrarMochilaMenu() {
   const bagContainer = document.getElementById("bag-items");
   bagContainer.innerHTML = "";
@@ -726,7 +703,6 @@ async function usarObjeto(itemKey) {
   volveralMenuPrincipal();
 
   if (itemKey === "revivir") {
-    // Mostrar lista de Pokémon debilitados
     const pokemonDebilitados = jugadorPokemon.filter((p) => p.hpActual <= 0);
     if (pokemonDebilitados.length === 0) {
       mostrarMensajeBatalla("No hay Pokémon debilitados.");
@@ -735,14 +711,12 @@ async function usarObjeto(itemKey) {
       habilitarBotones();
       return;
     }
-    // Por simplicidad, revivir al primer debilitado
     const pokemon = pokemonDebilitados[0];
     pokemon.hpActual = Math.floor(pokemon.hpMax * (item.curaPercent / 100));
     item.cantidad--;
 
     mostrarMensajeBatalla(`¡Usaste ${item.nombre} en ${pokemon.nombre}!`);
   } else {
-    // Curar al Pokémon activo
     if (pokemonJugadorActivo.hpActual >= pokemonJugadorActivo.hpMax) {
       mostrarMensajeBatalla(
         `${pokemonJugadorActivo.nombre} ya tiene toda su vida.`,
@@ -768,13 +742,9 @@ async function usarObjeto(itemKey) {
   actualizarInterfazBatalla();
   await esperarSegundos(1.5);
 
-  // Turno del oponente
   await turnoOponente();
 }
 
-// ==========================================
-// MENÚ DE POKÉMON
-// ==========================================
 function mostrarListaPokemon() {
   const listContainer = document.getElementById("pokemon-selection-list");
   listContainer.innerHTML = "";
@@ -822,7 +792,6 @@ async function cambiarPokemonBatalla(index) {
   volveralMenuPrincipal();
   deshabilitarBotones();
 
-  // Animación de retirada
   await animarRetirada("player");
 
   mostrarMensajeBatalla(
@@ -833,7 +802,6 @@ async function cambiarPokemonBatalla(index) {
   pokemonJugadorActivo = nuevoPokemon;
   await cargarMovimientos(pokemonJugadorActivo);
 
-  // Animación de entrada
   mostrarMensajeBatalla(`¡Adelante, ${pokemonJugadorActivo.nombre}!`);
   actualizarInterfazBatalla();
   await animarEntrada("player");
@@ -842,39 +810,16 @@ async function cambiarPokemonBatalla(index) {
   await turnoOponente();
 }
 
-// ==========================================
-// INTENTAR HUIR
-// ==========================================
 async function intentarHuir() {
   if (!turnoJugador) return;
-  turnoJugador = false;
 
-  deshabilitarBotones();
+  mostrarMensajeBatalla("No es posible huir de una pelea de entrenadores!");
 
-  // Probabilidad de huir basada en velocidad
-  const velocidadJugador = pokemonJugadorActivo.velocidad || 50;
-  const velocidadOponente = pokemonOponenteActivo.velocidad || 50;
-  const probabilidadHuir = Math.min(
-    90,
-    50 + (velocidadJugador - velocidadOponente),
-  );
+  await esperarSegundos(2);
 
-  const huye = Math.random() * 100 < probabilidadHuir;
-
-  if (huye) {
-    mostrarMensajeBatalla("¡Escapaste con éxito!");
-    await esperarSegundos(2);
-    cerrarBatalla();
-  } else {
-    mostrarMensajeBatalla("¡No pudiste escapar!");
-    await esperarSegundos(1);
-    await turnoOponente();
-  }
+  mostrarMensajeBatalla(`¿Qué hará ${pokemonJugadorActivo.nombre}?`);
 }
 
-// ==========================================
-// EJECUTAR ATAQUE DEL JUGADOR
-// ==========================================
 async function ejecutarAtaqueJugador(movimiento) {
   if (!turnoJugador) return;
   turnoJugador = false;
@@ -882,7 +827,6 @@ async function ejecutarAtaqueJugador(movimiento) {
   volveralMenuPrincipal();
   deshabilitarBotones();
 
-  // Verificar precisión
   const acierta = Math.random() * 100 < (movimiento.precision || 100);
 
   if (!acierta) {
@@ -921,16 +865,12 @@ async function ejecutarAtaqueJugador(movimiento) {
   }
 }
 
-// ==========================================
-// TURNO DEL OPONENTE
-// ==========================================
 async function turnoOponente() {
   await esperarSegundos(1);
 
   const movimientos = movimientosPokemon[pokemonOponenteActivo.nombre] || [];
 
   if (movimientos.length === 0) {
-    // Si no hay movimientos, usar Placaje por defecto
     movimientos.push({
       nombre: "tackle",
       nombreEspanol: "Placaje",
@@ -944,7 +884,6 @@ async function turnoOponente() {
   const movimientoAleatorio =
     movimientos[Math.floor(Math.random() * movimientos.length)];
 
-  // Verificar precisión
   const acierta = Math.random() * 100 < (movimientoAleatorio.precision || 100);
 
   if (!acierta) {
@@ -990,9 +929,6 @@ async function turnoOponente() {
   }
 }
 
-// ==========================================
-// CÁLCULO DE DAÑO
-// ==========================================
 function calcularDanio(atacante, defensor, movimiento) {
   const nivel = 50;
   const ataque =
@@ -1044,9 +980,6 @@ function tieneSTAB(tipoMovimiento, tiposPokemon) {
   );
 }
 
-// ==========================================
-// MENSAJES DE EFECTIVIDAD
-// ==========================================
 async function mostrarMensajeEfectividad(tipoAtaque, tiposDefensor) {
   const efectividad = calcularEfectividad(tipoAtaque, tiposDefensor);
   if (efectividad > 1) {
@@ -1061,9 +994,6 @@ async function mostrarMensajeEfectividad(tipoAtaque, tiposDefensor) {
   }
 }
 
-// ==========================================
-// POKÉMON DERROTADO
-// ==========================================
 async function pokemonOponenteDerrotado() {
   pokemonOponenteActivo.hpActual = 0;
   actualizarInterfazBatalla();
@@ -1085,7 +1015,6 @@ async function pokemonOponenteDerrotado() {
     );
     await esperarSegundos(0.5);
 
-    // Resetear sprite y animar entrada
     document
       .querySelector(".opponent-sprite-container")
       .classList.remove("anim-faint");
@@ -1112,7 +1041,6 @@ async function pokemonJugadorDerrotado() {
   const siguienteJugador = jugadorPokemon.find((p) => p.hpActual > 0);
 
   if (siguienteJugador) {
-    // Forzar cambio de Pokémon
     turnoJugador = true;
     mostrarSubMenu("pokemon");
     mostrarMensajeBatalla("¡Envía a otro Pokémon!");
@@ -1122,9 +1050,6 @@ async function pokemonJugadorDerrotado() {
   }
 }
 
-// ==========================================
-// FINALIZAR BATALLA
-// ==========================================
 async function finalizarBatalla(victoria) {
   const mensajeFinal = victoria
     ? "¡Ganaste la batalla!"
@@ -1132,15 +1057,10 @@ async function finalizarBatalla(victoria) {
 
   mostrarMensajeBatalla(mensajeFinal);
 
-  // Reproducir sonido de victoria/derrota (opcional)
-
   await esperarSegundos(3);
   cerrarBatalla();
 }
 
-// ==========================================
-// ANIMACIONES
-// ==========================================
 async function animarAtaque(atacante) {
   const container =
     atacante === "player"
@@ -1198,9 +1118,6 @@ async function animarEntrada(lado) {
   container.classList.remove("anim-enter");
 }
 
-// ==========================================
-// UTILIDADES
-// ==========================================
 function mostrarMensajeBatalla(mensaje) {
   document.getElementById("battle-message").textContent = mensaje;
 }
@@ -1230,12 +1147,17 @@ function cerrarBatalla() {
     .getElementById("pokeball-transition")
     .classList.remove("active", "opening");
 
-  // Resetear animaciones
   document
     .querySelectorAll(".player-sprite-container, .opponent-sprite-container")
     .forEach((el) => {
       el.classList.remove("anim-faint", "anim-retreat", "anim-enter");
     });
+
+  habilitarBotones();
+
+  volveralMenuPrincipal();
+
+  turnoJugador = true;
 
   batallaActiva = false;
 }

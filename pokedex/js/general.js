@@ -1,19 +1,18 @@
+// Variables globales
 let numeroIngresado = "";
 let pokemonGuardados = [];
 let pokemonActual = null;
-let vistaActual = {
-  frente: true,
-  shiny: false,
-};
+let vistaActual = { frente: true, shiny: false };
 let ivsGenerados = null;
-let generoSeleccionado = null;
+let pokemonTemporal = null;
 
+// Asigna numero al teclado de la pokedex
 function asignarNumero(boton) {
-  let numero = boton.innerText;
-  numeroIngresado += numero;
+  numeroIngresado += boton.innerText;
   document.getElementById("pokemon-numero").innerText = numeroIngresado;
 }
 
+// Busca un Pokemon por numero usando la PokeAPI
 async function buscarPokemon() {
   if (numeroIngresado === "") {
     alert("Por favor ingresa un número de Pokémon");
@@ -24,7 +23,6 @@ async function buscarPokemon() {
     const res = await fetch(
       `https://pokeapi.co/api/v2/pokemon/${numeroIngresado}`,
     );
-
     if (!res.ok) {
       alert("Pokémon no encontrado");
       return;
@@ -32,14 +30,9 @@ async function buscarPokemon() {
 
     const pokemon = await res.json();
     pokemonActual = pokemon;
-
-    vistaActual = {
-      frente: true,
-      shiny: false,
-    };
+    vistaActual = { frente: true, shiny: false };
 
     const esShiny = Math.random() < 0.001;
-
     if (esShiny) {
       document.getElementById("screen-left-image").classList.add("shiny");
       vistaActual.shiny = true;
@@ -52,7 +45,6 @@ async function buscarPokemon() {
 
     document.getElementById("pokemon-title").innerText =
       pokemon.name.toUpperCase();
-
     document.getElementById("pokemon-height").innerText =
       pokemon.height / 10 + " m";
     document.getElementById("pokemon-weight").innerText =
@@ -86,9 +78,8 @@ async function buscarPokemon() {
     const speciesData = await speciesRes.json();
     const genderRate = speciesData.gender_rate;
 
-    let genero = determinarGenero(genderRate);
-    document.getElementById("pokemon-genero").innerText = genero;
-
+    document.getElementById("pokemon-genero").innerText =
+      determinarGenero(genderRate);
     mostrarTipos(pokemon.types);
   } catch (error) {
     console.error("Error al buscar el Pokémon:", error);
@@ -96,29 +87,13 @@ async function buscarPokemon() {
   }
 }
 
+// Determina el genero del Pokemon (12% hembra, 88% macho)
 function determinarGenero(genderRate) {
-  if (genderRate === -1) {
-    return "Sin Genero";
-  }
-
-  // genderRate es la probabilidad sobre 8 de ser hembra
-  // 0 = 0% hembra (100% macho)
-  // 1 = 12.5% hembra
-  // 2 = 25% hembra
-  // 4 = 50% hembra
-  // 6 = 75% hembra
-  // 8 = 100% hembra (0% macho)
-
-  const probabilidadHembra = genderRate / 8;
-  const random = Math.random();
-
-  if (random < probabilidadHembra) {
-    return "Hembra";
-  } else {
-    return "Macho";
-  }
+  if (genderRate === -1) return "Sin Genero";
+  return Math.random() < 0.12 ? "Hembra" : "Macho";
 }
 
+// Genera IVs aleatorios (0-31), +10 si es shiny
 function generarIVs(esShiny) {
   const ivs = {
     hp: Math.floor(Math.random() * 32),
@@ -137,22 +112,21 @@ function generarIVs(esShiny) {
     ivs.spDefense = Math.min(ivs.spDefense + 10, 31);
     ivs.speed = Math.min(ivs.speed + 10, 31);
   }
-
   return ivs;
 }
 
+// Busca un Pokemon aleatorio
 function buscarPokemonRandom() {
-  const numeroAleatorio = Math.floor(Math.random() * 1025) + 1;
-  numeroIngresado = numeroAleatorio.toString();
+  numeroIngresado = (Math.floor(Math.random() * 1025) + 1).toString();
   document.getElementById("pokemon-numero").innerText = numeroIngresado;
   buscarPokemon();
 }
 
+// Actualiza la imagen del Pokemon segun la vista actual
 function actualizarImagenPokemon() {
   if (!pokemonActual) return;
 
   let imagenUrl;
-
   if (vistaActual.frente && !vistaActual.shiny) {
     imagenUrl = pokemonActual.sprites.front_default;
   } else if (!vistaActual.frente && !vistaActual.shiny) {
@@ -162,46 +136,36 @@ function actualizarImagenPokemon() {
   } else {
     imagenUrl = pokemonActual.sprites.back_shiny;
   }
-
   document.getElementById("screen-left-image").src = imagenUrl;
 }
 
-function cambiarVistaPokemon(direccion) {
+// Cambia entre vista frontal y trasera
+function cambiarVistaPokemon() {
   if (!pokemonActual) {
     alert("Primero busca un Pokémon");
     return;
   }
-
   vistaActual.frente = !vistaActual.frente;
-
   actualizarImagenPokemon();
 }
 
+// Navega al Pokemon anterior o siguiente
 function navegarPokemon(direccion) {
-  if (numeroIngresado === "") {
-    numeroIngresado = "1";
-  }
+  if (numeroIngresado === "") numeroIngresado = "1";
 
   let numeroActual = parseInt(numeroIngresado);
-
   if (direccion === "siguiente") {
-    numeroActual++;
-    if (numeroActual > 1025) {
-      numeroActual = 1;
-    }
-  } else if (direccion === "anterior") {
-    numeroActual--;
-    if (numeroActual < 1) {
-      numeroActual = 1025;
-    }
+    numeroActual = numeroActual >= 1025 ? 1 : numeroActual + 1;
+  } else {
+    numeroActual = numeroActual <= 1 ? 1025 : numeroActual - 1;
   }
 
   numeroIngresado = numeroActual.toString();
   document.getElementById("pokemon-numero").innerText = numeroIngresado;
-
   buscarPokemon();
 }
 
+// Muestra los tipos del Pokemon con imagenes
 function mostrarTipos(tipos) {
   const tiposEspanol = {
     normal: "normal",
@@ -232,38 +196,28 @@ function mostrarTipos(tipos) {
   const container2 = document.getElementById("tipo-container-2");
 
   if (tipos[0]) {
-    const tipoNombre = tipos[0].type.name;
-    const tipoEspanol = tiposEspanol[tipoNombre];
-    const imagenTipo = `<img src="tipos/Tipo_${tipoEspanol}.png" alt="${tipoEspanol}" style="width: 100%; height: auto;">`;
-    document.getElementById("pokemon-type-1").innerHTML = imagenTipo;
+    const tipoEspanol = tiposEspanol[tipos[0].type.name];
+    document.getElementById("pokemon-type-1").innerHTML =
+      `<img src="tipos/Tipo_${tipoEspanol}.png" alt="${tipoEspanol}" style="width: 100%; height: auto;">`;
     container1.style.display = "block";
   } else {
     container1.style.display = "none";
   }
 
   if (tipos[1]) {
-    const tipoNombre = tipos[1].type.name;
-    const tipoEspanol = tiposEspanol[tipoNombre];
-    const imagenTipo = `<img src="tipos/Tipo_${tipoEspanol}.png" alt="${tipoEspanol}" style="width: 100%; height: auto;">`;
-    document.getElementById("pokemon-type-2").innerHTML = imagenTipo;
+    const tipoEspanol = tiposEspanol[tipos[1].type.name];
+    document.getElementById("pokemon-type-2").innerHTML =
+      `<img src="tipos/Tipo_${tipoEspanol}.png" alt="${tipoEspanol}" style="width: 100%; height: auto;">`;
     container2.style.display = "block";
   } else {
     container2.style.display = "none";
   }
 }
 
-let pokemonTemporal = null;
-
+// Abre el modal para agregar Pokemon al equipo
 function agregarPokemon() {
   const numero = document.getElementById("pokemon-numero").innerText;
   const nombre = document.getElementById("pokemon-title").innerText;
-  const hp = document.getElementById("pokemon-hp").innerText;
-  const attack = document.getElementById("pokemon-attack").innerText;
-  const defense = document.getElementById("pokemon-defense").innerText;
-  const spAttack = document.getElementById("pokemon-sp-attack").innerText;
-  const spDefense = document.getElementById("pokemon-sp-defense").innerText;
-  const velocidad = document.getElementById("pokemon-speed").innerText;
-  const genero = document.getElementById("pokemon-genero").innerText;
 
   if (!numero || !nombre) {
     alert("Primero busca un Pokémon");
@@ -271,9 +225,7 @@ function agregarPokemon() {
   }
 
   if (pokemonGuardados.length >= 6) {
-    alert(
-      "¡Tu equipo ya está completo! Solo puedes tener 6 Pokémon. Elimina uno para agregar otro.",
-    );
+    alert("¡Tu equipo ya está completo! Solo puedes tener 6 Pokémon.");
     return;
   }
 
@@ -290,25 +242,20 @@ function agregarPokemon() {
     ivsGenerados.spDefense;
   document.getElementById("iv-speed-display").innerText = ivsGenerados.speed;
 
-  if (esShiny) {
-    document.getElementById("shiny-bonus-msg").style.display = "block";
-  } else {
-    document.getElementById("shiny-bonus-msg").style.display = "none";
-  }
-
-  generoSeleccionado = genero;
-  document.getElementById("genero-display").innerText = genero;
+  document.getElementById("shiny-bonus-msg").style.display = esShiny
+    ? "block"
+    : "none";
 
   pokemonTemporal = {
     numero: numero,
     nombre: nombre,
-    genero: genero,
-    hp: hp,
-    attack: attack,
-    defense: defense,
-    spAttack: spAttack,
-    spDefense: spDefense,
-    velocidad: velocidad,
+    genero: document.getElementById("pokemon-genero").innerText,
+    hp: document.getElementById("pokemon-hp").innerText,
+    attack: document.getElementById("pokemon-attack").innerText,
+    defense: document.getElementById("pokemon-defense").innerText,
+    spAttack: document.getElementById("pokemon-sp-attack").innerText,
+    spDefense: document.getElementById("pokemon-sp-defense").innerText,
+    velocidad: document.getElementById("pokemon-speed").innerText,
     esShiny: esShiny,
     ivs: ivsGenerados,
     sprites: pokemonActual.sprites,
@@ -320,6 +267,7 @@ function agregarPokemon() {
   document.getElementById("modal-agregar").style.display = "block";
 }
 
+// Confirma y agrega el Pokemon al equipo
 function confirmarAgregarPokemon() {
   if (!pokemonTemporal) return;
 
@@ -328,77 +276,52 @@ function confirmarAgregarPokemon() {
     pokemonTemporal.nombre = nombrePersonalizado.trim();
   }
 
-  if (generoSeleccionado) {
-    pokemonTemporal.genero = generoSeleccionado;
-  }
-
   pokemonGuardados.push(pokemonTemporal);
   pokemonTemporal = null;
   ivsGenerados = null;
-  generoSeleccionado = null;
 
   actualizarTabla();
   cerrarModalAgregar();
 
   numeroIngresado = "";
   document.getElementById("pokemon-numero").innerText = "";
-
   alert("¡Pokémon agregado a tu equipo!");
-}
-
-function seleccionarGenero(genero) {
-  generoSeleccionado = genero;
-  document.getElementById("genero-display").innerText = genero;
-
-  const botones = document.querySelectorAll(".genero-btn");
-  botones.forEach(
-    (btn) =>
-      (btn.style.background =
-        "linear-gradient(135deg, #868e96 0%, #495057 100%)"),
-  );
-
-  event.target.style.background =
-    "linear-gradient(135deg, #ffcb05 0%, #f7b500 100%)";
 }
 
 function cerrarModalAgregar() {
   document.getElementById("modal-agregar").style.display = "none";
   pokemonTemporal = null;
   ivsGenerados = null;
-  generoSeleccionado = null;
 }
 
+// Actualiza la tabla del equipo Pokemon
 function actualizarTabla() {
   const tbody = document.getElementById("contenido-tabla");
-
   tbody.innerHTML = "";
 
   pokemonGuardados.forEach((pokemon, index) => {
     const fila = document.createElement("tr");
-
-    const shinyIcon = pokemon.esShiny ? "Si" : "-";
-
     fila.innerHTML = `
-            <td>${pokemon.numero}</td>
-            <td>${pokemon.nombre}</td>
-            <td>${pokemon.genero}</td>
-            <td>${pokemon.hp} (IV:${pokemon.ivs.hp})</td>
-            <td>${pokemon.attack} (IV:${pokemon.ivs.attack})</td>
-            <td>${pokemon.defense} (IV:${pokemon.ivs.defense})</td>
-            <td>${pokemon.spAttack} (IV:${pokemon.ivs.spAttack})</td>
-            <td>${pokemon.spDefense} (IV:${pokemon.ivs.spDefense})</td>
-            <td>${pokemon.velocidad} (IV:${pokemon.ivs.speed})</td>
-            <td>${shinyIcon}</td>
-            <td>
-                <button onclick="abrirModalEditar(${index})">Editar</button>
-                <button onclick="eliminarPokemon(${index})">Eliminar</button>
-            </td>
-        `;
-
+      <td>${pokemon.numero}</td>
+      <td>${pokemon.nombre}</td>
+      <td>${pokemon.genero}</td>
+      <td>${pokemon.hp} (IV:${pokemon.ivs.hp})</td>
+      <td>${pokemon.attack} (IV:${pokemon.ivs.attack})</td>
+      <td>${pokemon.defense} (IV:${pokemon.ivs.defense})</td>
+      <td>${pokemon.spAttack} (IV:${pokemon.ivs.spAttack})</td>
+      <td>${pokemon.spDefense} (IV:${pokemon.ivs.spDefense})</td>
+      <td>${pokemon.velocidad} (IV:${pokemon.ivs.speed})</td>
+      <td>${pokemon.esShiny ? "Si" : "-"}</td>
+      <td>
+        <button onclick="abrirModalEditar(${index})">Editar</button>
+        <button onclick="eliminarPokemon(${index})">Eliminar</button>
+      </td>
+    `;
     tbody.appendChild(fila);
   });
 }
 
+// Elimina un Pokemon del equipo
 function eliminarPokemon(index) {
   if (confirm("¿Seguro que deseas eliminar este Pokémon de tu equipo?")) {
     pokemonGuardados.splice(index, 1);
@@ -406,6 +329,7 @@ function eliminarPokemon(index) {
   }
 }
 
+// Abre modal para editar nombre del Pokemon
 function abrirModalEditar(index) {
   document.getElementById("index").value = index;
   document.getElementById("nombre_editar").value =
@@ -417,6 +341,7 @@ function cerrarModalEditar() {
   document.getElementById("modal-editar").style.display = "none";
 }
 
+// Edita el nombre del Pokemon
 function editarPokemon() {
   const index = document.getElementById("index").value;
   const nuevoNombre = document.getElementById("nombre_editar").value;

@@ -160,7 +160,7 @@
     <br>
     <div style="text-align: center; margin: 40px 0;">
         <button id="battle-start-btn" class="battle-start-button" onclick="iniciarBatalla()">
-            ⚔️ INICIAR BATALLA ⚔️
+            INICIAR BATALLA
         </button>
     </div>
     <br>
@@ -168,13 +168,15 @@
     <!-- ==================== MODAL DE BATALLA ==================== -->
     <div id="battle-modal" class="battle-modal">
 
-        <!-- Transición de Pokébolas -->
+        <!-- Transición de Pokébola (apertura vertical) -->
         <div id="pokeball-transition" class="pokeball-transition">
-            <div class="pokeball-left">
-                <img src="pokeball.png" alt="Pokéball">
-            </div>
-            <div class="pokeball-right">
-                <img src="pokeball.png" alt="Pokéball">
+            <div class="pokeball-container">
+                <div class="pokeball-top-half">
+                    <img src="pokeball.png" alt="Pokeball">
+                </div>
+                <div class="pokeball-bottom-half">
+                    <img src="pokeball.png" alt="Pokeball">
+                </div>
             </div>
         </div>
 
@@ -182,19 +184,21 @@
         <div id="battle-intro" class="battle-intro">
             <div class="intro-bg"></div>
             <div class="intro-content">
-                <div class="intro-pokemon-container">
-                    <img id="intro-pokemon-sprite" class="intro-pokemon-sprite" src="" alt="Wild Pokemon">
+                <!-- Entrenador Oponente en la Intro -->
+                <div class="intro-trainer-container">
+                    <img id="intro-trainer-sprite" class="intro-trainer-sprite" src="trainer_opponent.png"
+                        alt="Trainer">
                 </div>
                 <div class="battle-intro-text">
-                    <h1 id="intro-title">¡Un Pokémon salvaje apareció!</h1>
-                    <h2 id="intro-pokemon-name"></h2>
+                    <h1 id="intro-title">Un entrenador te ha desafiado!</h1>
+                    <h2 id="intro-trainer-name">Entrenador Rocket</h2>
                 </div>
             </div>
         </div>
 
         <!-- Arena de Batalla -->
         <div id="battle-arena" class="battle-arena">
-            <button class="battle-close-btn" onclick="cerrarBatalla()">✕</button>
+            <button class="battle-close-btn" onclick="cerrarBatalla()">X</button>
 
             <!-- Campo de batalla con fondo -->
             <div class="battle-field">
@@ -214,6 +218,9 @@
                             <div class="hp-bar-container">
                                 <div id="opponent-hp-bar" class="hp-bar"></div>
                             </div>
+                        </div>
+                        <div id="opponent-pokeball-indicators" class="pokeball-indicators">
+                            <!-- Pokébolas del oponente se cargan dinámicamente -->
                         </div>
                     </div>
                     <div class="sprite-platform opponent-platform">
@@ -249,6 +256,9 @@
                             <span id="player-hp-current">0</span>
                             <span>/</span>
                             <span id="player-hp-max">0</span>
+                        </div>
+                        <div id="player-pokeball-indicators" class="pokeball-indicators">
+                            <!-- Pokébolas del jugador se cargan dinámicamente -->
                         </div>
                     </div>
                 </div>
@@ -303,18 +313,8 @@
     <div id="modal-agregar" class="modal">
         <div class="modal-content">
             <h2>¿Agregar a tu equipo?</h2>
-            <label>Nombre del Pokémon</label>
+            <label>Nombre del Pokemon</label>
             <input id="nombre_agregar" type="text">
-
-            <label>Genero</label>
-            <div id="genero-options" style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button type="button" onclick="seleccionarGenero('Macho')" class="genero-btn">Macho</button>
-                <button type="button" onclick="seleccionarGenero('Hembra')" class="genero-btn">Hembra</button>
-                <button type="button" onclick="seleccionarGenero('Sin Genero')" class="genero-btn">Sin Genero</button>
-            </div>
-            <p id="genero-seleccionado" style="text-align: center; font-weight: bold; margin: 10px 0;">
-                Genero seleccionado: <span id="genero-display">-</span>
-            </p>
 
             <div id="ivs-display" style="background: #f0f0f0; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
                 <h3 style="margin: 0 0 10px 0; text-align: center;">IVs Generados</h3>
